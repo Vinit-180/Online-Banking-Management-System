@@ -1,5 +1,6 @@
 package com.example.Online.Banking.Management.System.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +31,10 @@ public class Account {
 
 //    @ManyToOne(cascade = CascadeType.ALL)
 //    @OneToMany()
-    private transient List<Transaction> transactions;
+@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+//@JsonIgnore
+private List<Transaction> transactions = new ArrayList<>();
+//    private transient List<Transaction> transactions;
 
     public Account() {
         this.bankname = "Citibank"; // Setting the default value in the no-args constructor

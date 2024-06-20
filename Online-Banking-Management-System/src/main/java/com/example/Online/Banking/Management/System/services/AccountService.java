@@ -61,6 +61,7 @@ public class AccountService {
                 Map<String, Object> response = new HashMap<>();
                 response.put("account", acc.get());
                 response.put("user", user);
+                System.out.println(acc.get().getTransactions());
                 return new ApiManager<>(response,HttpStatus.OK,"Fetch Account successfully");
             }
             else{

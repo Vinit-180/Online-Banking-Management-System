@@ -5,6 +5,7 @@ import com.example.Online.Banking.Management.System.models.Account;
 import com.example.Online.Banking.Management.System.models.Transaction;
 import com.example.Online.Banking.Management.System.repositories.AccountRepository;
 import com.example.Online.Banking.Management.System.repositories.TransactionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -73,7 +74,7 @@ public class TransactionService {
     }
 
 // withdraw
-    public ApiManager<Transaction>withdrawTransaction(Transaction t){
+public ApiManager<Transaction>withdrawTransaction(Transaction t){
         try{
             Long SourceAccountId=t.getSourceAccountId();
             Optional<Account> source=accountRepository.findById(SourceAccountId);
@@ -87,10 +88,22 @@ public class TransactionService {
 //                        li=new ArrayList<Transaction>();
 //                    }
 //                    li.add(t);
+                    t.setAccount(account); // Associate transaction with account
                     rep.save(t);
-                    account.getTransactions().add(t);
-                    System.out.println(account.getTransactions());
+
+
+                    System.out.println(t);
+                    List<Transaction>l2=account.getTransactions();
+                    l2.add(t);
+//                    account.getTransactions().add(t2.get());
+//                    System.out.println(t2);
+//                    System.out.println("gggggggggggggggg"+account.getTransactions());
+                    account.setTransactions(l2);
                     accountRepository.save(account);
+
+//                    System.out.println("---------------"+accountRepository.save(account));
+                    System.out.println(account.getTransactions());
+//                    accountRepository.flush();
                     return new ApiManager<>(HttpStatus.OK, "Transaction Success", "Amount Withdraw Successfully");
                 } else {
 

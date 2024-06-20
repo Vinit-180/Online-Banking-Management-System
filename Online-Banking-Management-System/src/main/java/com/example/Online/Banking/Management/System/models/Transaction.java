@@ -1,5 +1,6 @@
 package com.example.Online.Banking.Management.System.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -59,6 +60,19 @@ public class Transaction {
         this.sourceAccountId=sourceAccountId;
         this.targetAccountId=targetAccountId;
     }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    @JsonIgnore
+    private Account account;
 
     public Long getTransactionId() {
         return transactionId;
