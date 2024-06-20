@@ -1,8 +1,13 @@
 package com.example.Online.Banking.Management.System.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
+//@AllArgsConstructor
 @Table(name="transactions")
 public class Transaction {
     @Id
@@ -11,16 +16,48 @@ public class Transaction {
 
     private String type;
     private double amount;
-    private int timestamp;
+
+
+//    @CreationTimestamp automatically sets the creation timestamp when the entity is first persisted
+//    @CreationTimestamp
+//    @Column(name = "created_at", updatable = false)
+    private LocalDateTime timestamp;
+
+    private Long sourceAccountId;
+
+    @Column(nullable = true)
+    private Long targetAccountId;
+
+    public Long getSourceAccountId() {
+        return sourceAccountId;
+    }
+
+    public void setSourceAccountId(Long sourceAccountId) {
+        this.sourceAccountId = sourceAccountId;
+    }
+
+    public Long getTargetAccountId() {
+        return targetAccountId;
+    }
+
+    public void setTargetAccountId(Long targetAccountId) {
+        targetAccountId = targetAccountId;
+    }
 
     public Transaction(){
 
     }
 
-    public Transaction(int timestamp, double amount, String type) {
-        this.timestamp = timestamp;
+    public Transaction( double amount, String type,Long sourceAccountId) {
         this.amount = amount;
         this.type = type;
+        this.sourceAccountId=sourceAccountId;
+    }
+    public Transaction( double amount, String type,Long sourceAccountId,Long targetAccountId) {
+        this.amount = amount;
+        this.type = type;
+        this.sourceAccountId=sourceAccountId;
+        this.targetAccountId=targetAccountId;
     }
 
     public Long getTransactionId() {
@@ -44,11 +81,11 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public int getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }

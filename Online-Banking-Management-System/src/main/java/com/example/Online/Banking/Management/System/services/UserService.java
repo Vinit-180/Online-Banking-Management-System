@@ -2,6 +2,7 @@ package com.example.Online.Banking.Management.System.services;
 
 import com.example.Online.Banking.Management.System.ApiManager;
 import com.example.Online.Banking.Management.System.models.User;
+import com.example.Online.Banking.Management.System.repositories.AccountRepository;
 import com.example.Online.Banking.Management.System.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,9 @@ public class UserService {
 
     @Autowired
     UserRepository repository;
+
+    @Autowired
+    AccountRepository accountRepository;
 
 //    save user
     public ApiManager<User> saveUser(User u){
@@ -48,7 +52,7 @@ public class UserService {
                 return new ApiManager<>(user.get(), HttpStatus.OK, "User fetch Successfully");
             }
             else{
-                return new ApiManager<>(HttpStatus.NOT_FOUND,"Data Found","User  not Found with id:"+id);
+                return new ApiManager<>(HttpStatus.NOT_FOUND,"Data Not Found","User  not Found with id:"+id);
             }
         }
         catch (Exception e)
@@ -94,6 +98,20 @@ public class UserService {
             return new ApiManager<>(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage(),"Internal Server Error");
         }
     }
+
+//    delete by userId
+public ApiManager<String> deleteUserById(Long userId) {
+    try {
+        if (accountRepository.existsByUserId(userId)) {
+            return new ApiManager<>(HttpStatus.BAD_REQUEST, "User has associated accounts and cannot be deleted.", "Deletion Error");
+        }
+        repository.deleteById(userId);
+        return new ApiManager<>(HttpStatus.OK, "User deleted successfully.", "Success");
+    } catch (Exception e) {
+        return new ApiManager<>(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), "Internal Server Error");
+    }
+}
+
 
 //    public User findByUsername(String username) {
 //        return rpository.findByUsername(username);

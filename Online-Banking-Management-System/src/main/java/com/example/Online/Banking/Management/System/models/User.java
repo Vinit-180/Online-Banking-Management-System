@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.*;
 
 @Entity
 @Getter
@@ -29,5 +30,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Account> accounts;
 
 }

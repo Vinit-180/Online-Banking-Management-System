@@ -27,7 +27,7 @@ public class UserController {
 
 
     @GetMapping("/getallusers")
-    public ApiManager<List<User>> listUser(){
+    public ApiManager<List<User>> listAllUsers(){
         System.out.println("List All Users");
         return service.findAllUsers();
     }
@@ -40,6 +40,11 @@ public class UserController {
     @PostMapping("/signin")
     public ApiManager<User> signInUser(@RequestBody Map<String, String> credentials){
         return service.userSignIn(credentials.get("username"),credentials.get("password"));
+    }
+
+    @DeleteMapping("/deleteuser/{id}")
+    public ApiManager<String> deleteUserById(@PathVariable(value = "id") Long id){
+        return service.deleteUserById(id);
     }
 
 }
