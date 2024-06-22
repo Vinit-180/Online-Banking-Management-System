@@ -29,6 +29,7 @@ public class TransactionService {
         try{
             Long SourceAccountId=t.getSourceAccountId();
             Long TargetAccountId=t.getTargetAccountId();
+            System.out.println("Transfer-----------"+t.getTargetAccountId()+t.getSourceAccountId()+t.getType());
             Optional<Account> source=accountRepository.findById(SourceAccountId);
             Optional<Account> target=accountRepository.findById(TargetAccountId);
 //            both are present or not
@@ -42,15 +43,31 @@ public class TransactionService {
                     }
 //                    else transfer money
                     else {
+                        System.out.println("Transfer Money");
                         if(isAmountAvailable(source.get(), t.getAmount())){
                             boolean trans1 =updateAccountBalance(source.get(),t.getAmount(),"withdraw");
                             if(trans1) {
                                 boolean trans2 = updateAccountBalance(target.get(), t.getAmount(), "deposit");
                                 if (trans2) {
-                                    source.get().addTransaction(t);
-                                    target.get().addTransaction(t);
+//                                    source.get().addTransaction(t);
+                                    Account sourceAccount=source.get();
+                                    Account targetAccount=target.get();
                                     t.setTimestamp(LocalDateTime.now());
+                                    t.setAccount(sourceAccount);
                                     rep.save(t);
+
+                                    List<Transaction>l1=sourceAccount.getTransactions();
+                                    l1.add(t);
+                                    List<Transaction>l2=targetAccount.getTransactions();
+                                    l2.add(t);
+
+                                    sourceAccount.setTransactions(l1);
+                                    targetAccount.setTransactions(l2);
+                                    System.out.println(sourceAccount.getTransactions());
+                                    System.out.println(targetAccount.getTransactions());
+//                                    target.get().addTransaction(t);
+                                    accountRepository.save(sourceAccount);
+                                    accountRepository.save(targetAccount);
                                     return new ApiManager<>(t,HttpStatus.OK,"Transfer Money Successfull from "+source.get().getId()+" to "+target.get().getId());
                                 } else {
                                     updateAccountBalance(source.get(),t.getAmount(),"deposit");
@@ -64,7 +81,9 @@ public class TransactionService {
                     return new ApiManager<>(HttpStatus.BAD_REQUEST,"Insufficient Balance","Account "+source.get().getId()+" Doesn't have sufficient Balance");
                 }
             }
-
+            else{
+                return new ApiManager<>(HttpStatus.NOT_FOUND,"Id is invalid","Account Not Found");
+            }
             return new ApiManager<>(t,HttpStatus.OK,"Transaction Created Successfully");
         }
         catch (Exception e)
@@ -83,11 +102,7 @@ public ApiManager<Transaction>withdrawTransaction(Transaction t){
                     t.setTimestamp(LocalDateTime.now());
                     Account account = source.get();
                     System.out.println(account.getTransactions());
-//                    List<Transaction>li= account.getTransactions();
-//                    if(li.isEmpty()){
-//                        li=new ArrayList<Transaction>();
-//                    }
-//                    li.add(t);
+
                     t.setAccount(account); // Associate transaction with account
                     rep.save(t);
 
@@ -95,6 +110,11 @@ public ApiManager<Transaction>withdrawTransaction(Transaction t){
                     System.out.println(t);
                     List<Transaction>l2=account.getTransactions();
                     l2.add(t);
+                    //                    List<Transaction>li= account.getTransactions();
+//                    if(li.isEmpty()){
+//                        li=new ArrayList<Transaction>();
+//                    }
+//                    li.add(t);
 //                    account.getTransactions().add(t2.get());
 //                    System.out.println(t2);
 //                    System.out.println("gggggggggggggggg"+account.getTransactions());
@@ -118,6 +138,41 @@ public ApiManager<Transaction>withdrawTransaction(Transaction t){
             return new ApiManager<>(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage(),"Internal Server Error");
         }
     }
+
+//    deposit
+public ApiManager<Transaction>depositransaction(Transaction t){
+    try{
+        Long TargetAccountId=t.getTargetAccountId();
+        Optional<Account> source=accountRepository.findById(TargetAccountId);
+        if(source.isPresent()) {
+            if (updateAccountBalance(source.get(), t.getAmount(), "deposit")) {
+                t.setTimestamp(LocalDateTime.now());
+                Account account = source.get();
+//                System.out.println(account.getTransactions());
+                t.setAccount(account);
+                rep.save(t);
+//                System.out.println(t);
+                List<Transaction>l2=account.getTransactions();
+                l2.add(t);
+                account.setTransactions(l2);
+                accountRepository.save(account);
+
+                System.out.println(account.getTransactions());
+                return new ApiManager<>(HttpStatus.OK, "Transaction Success", "Amount Deposit Successfully");
+            } else {
+
+                return new ApiManager<>(HttpStatus.BAD_REQUEST, "Transaction Failed", "Transaction Failed");
+            }
+        }
+        else{
+            return new ApiManager<>(HttpStatus.NOT_FOUND,"Transaction Failed","Account not found with id:"+t.getSourceAccountId());
+        }
+    }
+    catch (Exception e){
+        return new ApiManager<>(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage(),"Internal Server Error");
+    }
+}
+
 
     public boolean isAmountAvailable(Account source,double amount){
         return (source.getBalance()-amount)>=0;

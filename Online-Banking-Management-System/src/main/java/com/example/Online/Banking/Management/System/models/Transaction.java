@@ -1,6 +1,8 @@
 package com.example.Online.Banking.Management.System.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,15 +20,14 @@ public class Transaction {
     private String type;
     private double amount;
 
-
-//    @CreationTimestamp automatically sets the creation timestamp when the entity is first persisted
-//    @CreationTimestamp
-//    @Column(name = "created_at", updatable = false)
     private LocalDateTime timestamp;
 
+    @Column(name = "source_account_id")
+    @JsonProperty("sourceAccountId")
     private Long sourceAccountId;
 
-    @Column(nullable = true)
+    @Column(name = "target_account_id")
+    @JsonProperty("targetAccountId")
     private Long targetAccountId;
 
     public Long getSourceAccountId() {
@@ -54,6 +55,7 @@ public class Transaction {
         this.type = type;
         this.sourceAccountId=sourceAccountId;
     }
+    @JsonCreator
     public Transaction( double amount, String type,Long sourceAccountId,Long targetAccountId) {
         this.amount = amount;
         this.type = type;

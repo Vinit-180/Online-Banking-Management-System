@@ -40,4 +40,9 @@ public class AccountController {
     public ApiManager<Double> getBalanceById(@PathVariable(value = "id") Long id){
         return accService.getBalanceByAccountId(id);
     }
+
+    @PutMapping("/updatedetails")
+    public  ApiManager<Account> updateAccountDetails(@RequestBody Account acc){
+        return accService.updateAccount(acc);
+    }
 }

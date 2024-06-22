@@ -23,7 +23,13 @@ public class TransactionController {
 
     @PostMapping("/transfer")
     public ApiManager<Transaction> transferAmount(@RequestBody Transaction t){
+        System.out.println(t.getTargetAccountId());
         return transService.TransferMoney(t);
+    }
+    @PostMapping("/deposit")
+    public ApiManager<Transaction> depositAmount(@RequestBody Transaction t){
+        System.out.println(t.getTargetAccountId());
+        return transService.depositransaction(t);
     }
 
     @GetMapping("/getalltransactions")

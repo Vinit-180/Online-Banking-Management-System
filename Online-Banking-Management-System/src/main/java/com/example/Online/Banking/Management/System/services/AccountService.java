@@ -92,6 +92,26 @@ public class AccountService {
         }
     }
 
+//    update account details
+public ApiManager<Account> updateAccount(Account updatedAccountDetails) {
+    try{
+        Optional<Account> existingAccount = rep.findById(updatedAccountDetails.getId());
+        if (existingAccount.isPresent()) {
+            Account acc=existingAccount.get();
+//            acc.setType(updatedAccountDetails.getType());
+//            acc.setBalance(updatedAccountDetails.getBalance());
+            acc.setBankname(updatedAccountDetails.getBankname());
+             rep.save(acc);
+             return new ApiManager<>(acc,HttpStatus.OK,"Account Details Updated Successfully");
+        } else {
+            return new ApiManager<>(HttpStatus.NOT_FOUND, "Account Updation Failed", "Account not found with id:" + updatedAccountDetails.getId());
+        }
+    }
+    catch (Exception e){
+        return new ApiManager<>(HttpStatus.INTERNAL_SERVER_ERROR,e.getMessage(),"Internal Server Error");
+    }
+}
+
 //    find account details by user id
 
 
