@@ -13,7 +13,6 @@ and is deployed using Docker containers to ensure consistency across environment
 - [Usage](#usage)
 - [Database Design](#database-design)
 - [Contributing](#contributing)
-- [License](#license)
 
 
 ## Features
@@ -42,16 +41,19 @@ Follow these steps to set up the project locally:
 - Docker
 
 ## Backend Setup
-1. Clone the repository:
-`git clone https://github.com/your-username/online-banking-management-system.git
-cd online-banking-management-system`
+  1. Clone the repository:
+   
+  `git clone https://github.com/your-username/online-banking-management-system.git
+  cd online-banking-management-system`
+  
+  2. Navigate to the backend directory and build the Spring Boot application:
 
-2.Navigate to the backend directory and build the Spring Boot application:
-`cd backend
-./mvnw clean install`
-
-3. Start the backend server:
-`./mvnw spring-boot:run`
+  `cd backend
+  ./mvnw clean install`
+  
+  3. Start the backend server:
+     
+  `./mvnw spring-boot:run`
 
 ## Database Setup
 1. Create a MySQL database:
